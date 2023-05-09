@@ -84,7 +84,6 @@ const ViewOnWebView: React.FC = () => {
       <WebView
         ref={ref => {
           webViewRef.current = ref;
-          webViewRef.current && opreator.current.init(webViewRef.current);
         }}
         style={pageStyles.webView}
         source={{ uri: url ?? '' }}
@@ -92,8 +91,6 @@ const ViewOnWebView: React.FC = () => {
         onNavigationStateChange={handleNavigationStateChange}
         onMessage={opreator.current.handleDappMessage}
         injectedJavaScriptBeforeContentLoaded={injectedJavaScript}
-        // cacheEnabled={false}
-        // incognito={incognito}
       />
     </SafeAreaBox>
   );

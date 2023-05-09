@@ -19,11 +19,12 @@ const createHandler=()=>{
       const eventId=randomId();
       window.ReactNativeWebView.postMessage(JSON.stringify({payload,eventId}));
       return new Promise((resolve, reject) => {
-        setTimeout(()=>{reject({code:-1,msg:'timeout'})},maxWaitTime);
+        // setTimeout(()=>{reject({code:2,msg:'timeout'})},maxWaitTime);
         window.addEventListener(eventId,(e)=>{
-          const {msg,code}=e.detail || {};
+          const {msg,code,data}=e.detail || {};
           if(code===0){
-            resolve(e.detail);
+            console.log('request() resolved, data: ', data);
+            resolve(data);
             return;
           }
           reject(e.detail);

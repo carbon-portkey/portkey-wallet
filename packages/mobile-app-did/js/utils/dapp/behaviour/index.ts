@@ -1,3 +1,4 @@
+import WebsiteAuthentication from './auth';
 import { TransactionInfo } from './transaction';
 
 export enum CentralEthereumEvents {
@@ -27,12 +28,12 @@ export interface RequestMessage {
 }
 
 export interface RequestResponse {
-  code: RequestCode;
+  code: ResponseCode;
   msg?: string;
   data?: any;
 }
 
-export enum RequestCode {
+export enum ResponseCode {
   ERROR_IN_PARAMS = -1,
   UNKNOWN_METHOD = -2,
   UNIMPLEMENTED = -3,
@@ -40,6 +41,7 @@ export enum RequestCode {
   SUCCESS = 0,
   INTERNAL_ERROR = 1,
   TIMEOUT = 2,
+  USER_DENIED = 3,
 }
 
 export interface EthereumBehaviour {
@@ -138,19 +140,21 @@ interface Web3OperationAdapterBase {
 interface Web3OperationAdapterExperimental {
   /**
    * grant permissions that a website may use
-   * since eth_accounts is the only permission that a website can get, this API is not implemented yet
+   * since eth_accounts is the only permission that a website can get, this API can not call outside
    * @param premissions the permission that a website want to get
+   * @param websiteInfo current website info
    * @returns grantedPermissions show granted permissions
    */
   requestPermissions: (
     premissions: Array<WalletPermissions>,
+    websiteInfo: WebsiteAuthentication,
   ) => Promise<{ grantedPermissions: Array<WalletPermissions> }>;
 
   /**
    * returns the permissions that a website has been granted
    * @returns grantedPermissions show granted permissions
    */
-  getPermissions: () => Promise<{ grantedPermissions: Array<WalletPermissions> }>;
+  getPermissions: (websiteInfo: WebsiteAuthentication) => Promise<{ grantedPermissions: Array<WalletPermissions> }>;
 }
 
 export type Web3OperationAdapter = Partial<Web3OperationAdapterBase> &

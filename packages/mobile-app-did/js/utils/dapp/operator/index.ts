@@ -2,21 +2,23 @@ import WebView, { WebViewMessageEvent } from 'react-native-webview';
 import {
   CentralEthereumEvents,
   EthereumEventsDeprecated,
-  RequestCode,
+  ResponseCode,
   RequestMessage,
   RequestResponse,
   RPCMethods,
   RPCMethodsBase,
   RPCMethodsDemo,
   RPCMethodsUnimplemented,
+  WalletPermissions,
 } from '../behaviour';
 import handlerJS from '../webpageHandler';
 import DappOperationManager from '../manager';
+import { DappAuthManager } from '../manager/auth';
 
 export default class DappOperator {
   public url?: string;
   private static ins: DappOperator = new DappOperator();
-  private webviewRef?: WebView | null;
+  private webviewRef?: WebView;
 
   public static getIns(): DappOperator {
     return DappOperator.ins;
@@ -85,6 +87,8 @@ export default class DappOperator {
   };
 
   protected handleRequest = async (method: RPCMethods, data: any, eventId: string) => {
+    const hostName = getHostName(this.url ?? '');
+    const manager: DappOperationManager = DappOperationManager.getIns();
     try {
       switch (method) {
         case RPCMethodsDemo.HELLO_PORTKEY: {
@@ -97,11 +101,11 @@ export default class DappOperator {
             eventId,
             !(chainId.length > 0)
               ? {
-                  code: RequestCode.INTERNAL_ERROR,
+                  code: ResponseCode.INTERNAL_ERROR,
                   msg: 'operation failed',
                 }
               : {
-                  code: RequestCode.SUCCESS,
+                  code: ResponseCode.SUCCESS,
                   data: chainId,
                 },
           );
@@ -109,14 +113,35 @@ export default class DappOperator {
         }
 
         case RPCMethodsBase.ACCOUNTS:
-        case RPCMethodsBase.REQUEST_ACCOUNTS:
+        case RPCMethodsBase.REQUEST_ACCOUNTS: {
+          const authSuccess = async () => {
+            const { address } = await DappOperationManager.getIns().getAccountAddress();
+            this.publishEventCallback(eventId, {
+              code: ResponseCode.SUCCESS,
+              data: [address],
+            });
+          };
+          try {
+            const authResult = await DappAuthManager.getIns().checkPermission({ hostName });
+            if (authResult) {
+              authSuccess();
+              return;
+            }
+            const permissionResult = await manager.requestPermissions([WalletPermissions.ACCOUNTS], { hostName });
+            if (permissionResult.grantedPermissions.includes(WalletPermissions.ACCOUNTS)) {
+              authSuccess();
+              return;
+            }
+          } catch (e) {}
+          this.publishEventCallback(eventId, {
+            code: ResponseCode.USER_DENIED,
+            msg: 'user rejected the request',
+          });
+          break;
+        }
         case RPCMethodsBase.GET_PUBLIC_KEY:
         case RPCMethodsBase.DECRYPT: {
-          DappOperationManager.getIns().authenticationCall(
-            eventId,
-            { hostName: getHostName(this.url ?? '') },
-            async () => this.handleAuthRequest(eventId, method),
-          );
+          manager.authenticationCall(eventId, { hostName }, async () => this.handleAuthRequest(eventId, method));
           break;
         }
         case RPCMethodsUnimplemented.ADD_CHAIN:
@@ -125,22 +150,22 @@ export default class DappOperator {
         case RPCMethodsUnimplemented.GET_PERMISSIONS:
         case RPCMethodsUnimplemented.NET_VERSION: {
           this.publishEventCallback(eventId, {
-            code: RequestCode.UNIMPLEMENTED,
+            code: ResponseCode.UNIMPLEMENTED,
             msg: 'this method is not implemented',
           });
           break;
         }
         default: {
           this.publishEventCallback(eventId, {
-            code: RequestCode.UNKNOWN_METHOD,
+            code: ResponseCode.UNKNOWN_METHOD,
             msg: 'unknown method',
           });
         }
       }
     } catch (e) {
-      console.error(`error when handleRequest: ${method}, ${data}, ${eventId}`);
+      console.error(`error when handleRequest, method:${method}, data:${data}, eventId:${eventId}, error:${e}`);
       this.publishEventCallback(eventId, {
-        code: RequestCode.INTERNAL_ERROR,
+        code: ResponseCode.INTERNAL_ERROR,
         msg: 'internal error',
       });
     }
@@ -149,17 +174,13 @@ export default class DappOperator {
   // not fully implemented
   private handleAuthRequest = async (eventId: string, method: RPCMethodsBase) => {
     this.publishEventCallback(eventId, {
-      code: RequestCode.UNIMPLEMENTED,
+      code: ResponseCode.UNIMPLEMENTED,
       msg: 'this method is not implemented',
     });
   };
 
   private executeJS = (js: string): void => {
-    if (!this.webviewRef) {
-      console.error("there's no webviewRef");
-      return;
-    }
-    this.webviewRef.injectJavaScript(js);
+    this.webviewRef?.injectJavaScript(js);
   };
 }
 
