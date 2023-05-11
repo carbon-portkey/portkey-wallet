@@ -1,4 +1,4 @@
-const handlerJS = `
+const handlerJSDowngrade = `
 const maxWaitTime = 5000;
 const createHandler=()=>{
   return {
@@ -40,4 +40,4 @@ const randomId = (max=999999) => new Date().getTime()+'_'+Math.floor(Math.random
 window.ethereum = createHandler();
 `;
 
-export default handlerJS;
+export default handlerJSDowngrade;

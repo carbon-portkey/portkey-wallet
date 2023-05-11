@@ -1,0 +1,20 @@
+{
+  "name": "dapp-provider",
+  "version": "1.0.0",
+  "description": "provides inpage provider for dapps.",
+  "main": "index.js",
+  "scripts": {
+    "prework": "tsc ./src/inpage.ts && node ./src/build.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ts-loader": "^9.4.0",
+    "tsc": "^2.0.4",
+    "typescript": "^5.0.4",
+    "webpack": "^5.74.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.1.2"
+  }
+}

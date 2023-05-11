@@ -11,10 +11,10 @@ import {
   RPCMethodsUnimplemented,
   WalletPermissions,
 } from '../behaviour';
-import handlerJS from '../webpageHandler';
+import handlerJSDowngrade from '../webpageHandler';
 import DappOperationManager from '../manager';
 import { DappAuthManager } from '../manager/auth';
-
+import inpage from '../../../../../../packages/dapp-provider/src/inpage_provider';
 export default class DappOperator {
   public url?: string;
   private static ins: DappOperator = new DappOperator();
@@ -34,7 +34,11 @@ export default class DappOperator {
   }
 
   private injectHandlerToWebview = (): void => {
-    this.executeJS(handlerJS);
+    let generatedJS = '';
+    try {
+      generatedJS = inpage;
+    } catch (e) {}
+    this.executeJS(generatedJS?.length > 0 ? generatedJS : handlerJSDowngrade);
   };
 
   public handleDappMessage = async ({ nativeEvent }: WebViewMessageEvent) => {

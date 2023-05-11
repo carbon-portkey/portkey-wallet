@@ -1,9 +1,8 @@
-import { useCurrentChainList } from '@portkey-wallet/hooks/hooks-ca/chainList';
 import { ResponseCode, RequestResponse, WalletPermissions, Web3OperationAdapter } from '../behaviour';
 import WebsiteAuthentication from '../behaviour/auth';
 import DappOperator from '../operator';
 import { DappAuthManager } from './auth';
-import { getWallet, getWalletAddress, getWalletInfo } from 'utils/redux';
+import { getWallet, getWalletAddress } from 'utils/redux';
 import aes from '@portkey-wallet/utils/aes';
 import { Alert } from 'react-native';
 
