@@ -27,7 +27,8 @@
     "extension:did": "yarn workspace web-extension-did run",
     "extension-did:dev": "yarn extension:did dev:watch",
     "graphql": "yarn workspace @portkey-wallet/graphql run",
-    "page": "yarn workspace web-page run"
+    "page": "yarn workspace web-page run",
+    "dapp-provider:build": "yarn workspace dapp-provider run prework"
   },
   "devDependencies": {
     "eslint": "^8.23.1",

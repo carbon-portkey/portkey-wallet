@@ -56,9 +56,9 @@ const AboutUs = () => {
         title="Terms of Service"
         onPress={() => {
           navigationService.navigate('ViewOnWebView', {
-            title: 'The Bridge',
+            title: 'start',
             //TODO change url for debug
-            url: `https://ebridge.exchange/`,
+            url: `http://192.168.10.102:8080/#/home`,
           });
         }}
       />

@@ -14,7 +14,8 @@ import {
 import handlerJSDowngrade from '../webpageHandler';
 import DappOperationManager from '../manager';
 import { DappAuthManager } from '../manager/auth';
-import inpage from '../../../../../../packages/dapp-provider/src/inpage_provider';
+import inpage from '../webpageHandler/inpage_provider';
+
 export default class DappOperator {
   public url?: string;
   private static ins: DappOperator = new DappOperator();
@@ -38,7 +39,7 @@ export default class DappOperator {
     try {
       generatedJS = inpage;
     } catch (e) {}
-    this.executeJS(generatedJS?.length > 0 ? generatedJS : handlerJSDowngrade);
+    this.executeJS('var exports = {};' + `${generatedJS?.length > 0 ? generatedJS : handlerJSDowngrade}`);
   };
 
   public handleDappMessage = async ({ nativeEvent }: WebViewMessageEvent) => {
@@ -46,10 +47,10 @@ export default class DappOperator {
     console.log(decodeURIComponent(data), 'handleDappMessage');
     try {
       const {
-        payload: { method, data: requestData },
+        payload: { method, data: requestData, msg },
         eventId,
       } = (JSON.parse(decodeURIComponent(data)) as RequestMessage) || {};
-      console.log(`method: ${method}, data: ${requestData}`);
+      console.log(`method: ${method}, msg:${msg ?? ''} ${data ? `, data: ${data}` : ''}`);
       await this.handleRequest(method, requestData, eventId);
     } catch (e) {
       console.error('error when try to parse object:', data);

@@ -3,5 +3,9 @@ const fs = require('fs');
 const path = require('path');
 
 const inpageContent = fs.readFileSync(path.join(__dirname, 'inpage.js')).toString();
-fs.writeFileSync('./src/inpage_provider.js', `const inpage = \`${inpageContent}\`;\nexport default inpage;\n`, 'ascii');
+fs.writeFileSync(
+  '../mobile-app-did/js/utils/dapp/webpageHandler/inpage_provider.js',
+  `const inpage = \`${inpageContent}\`;\nexport default inpage;\n`,
+  'ascii',
+);
 console.log('inpage_provider.js generated succesfully');

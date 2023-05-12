@@ -23,7 +23,7 @@ export enum EthereumEventsDeprecated {
 export type EthereumEvents = CentralEthereumEvents | EthereumEventsDeprecated;
 
 export interface RequestMessage {
-  payload: { method: RPCMethods; data: any };
+  payload: { method: RPCMethods; data?: any; msg?: string };
   eventId: string;
 }
 

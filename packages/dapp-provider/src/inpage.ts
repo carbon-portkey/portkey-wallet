@@ -22,7 +22,7 @@ class MyHandler implements DappOperationHandler {
     window.removeEventListener(event, listener);
     return this;
   };
-  request = async (payload: { method: string; data?: any }) => {
+  request = (payload: { method: string; data?: any }) => {
     const eventId = this.randomId();
     window.ReactNativeWebView.postMessage(JSON.stringify({ payload, eventId }));
     return new Promise((resolve, reject) => {
@@ -36,13 +36,16 @@ class MyHandler implements DappOperationHandler {
             resolve(data);
             return;
           }
-          reject(e.detail);
+          reject(e?.detail ?? {});
         },
         { once: true },
       );
     });
   };
   randomId = (max = 999999) => new Date().getTime() + '_' + Math.floor(Math.random() * max);
+  log = (msg: string, data?: any) => {
+    this.request({ method: 'log', data: { msg, data } });
+  };
 }
 
 const init = () => {
@@ -52,4 +55,8 @@ const init = () => {
   }
 };
 
-init();
+try {
+  init();
+} catch (e) {
+  console.error('error when init dapp-provider: ', e);
+}

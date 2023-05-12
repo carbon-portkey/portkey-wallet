@@ -65,6 +65,7 @@ buck-out/
 
 # dapp
 **/js/utils/dapp/behaviour/*.js
+**/js/utils/dapp/webpageHandler/inpage_provider.js
 
 #svg 
 handleSvg.js
