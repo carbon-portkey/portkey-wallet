@@ -189,8 +189,10 @@ export default class DappOperator {
   };
 }
 
-const getHostName = (url: string) => {
+export const getHostName = (url: string) => {
   if (!url) return '';
-  const reg = /^http(s)?:\/\/(.*?)\//;
-  return reg.exec(url)?.[2] ?? '';
+  const reg = /^(https?:\/\/)?([a-zA-Z0-9.-]+\.[a-zA-Z]{2,})(:\d+)?(\/.*)?$/;
+  if (!reg.test(url)) return '';
+  const urlShards = reg.exec(url) || [];
+  return urlShards[1] + urlShards[2] ?? '';
 };

@@ -9,7 +9,7 @@ declare const window: {
   };
 };
 
-class MyHandler implements DappOperationHandler {
+export class MyHandler implements DappOperationHandler {
   isPortkey = true;
   isConnected = () => true;
   on = (event: EthereumEvents, listener: (...args: any[]) => void, once = false) => {
@@ -48,7 +48,7 @@ class MyHandler implements DappOperationHandler {
   };
 }
 
-const init = () => {
+export const init = () => {
   if (window) {
     const handler = new MyHandler();
     window.ethereum = handler;
@@ -59,4 +59,5 @@ try {
   init();
 } catch (e) {
   console.error('error when init dapp-provider: ', e);
+  throw e;
 }

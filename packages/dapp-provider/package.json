@@ -4,7 +4,8 @@
   "description": "provides inpage provider for dapps.",
   "main": "index.js",
   "scripts": {
-    "prework": "tsc ./src/inpage.ts && node ./src/build.js"
+    "prework": "tsc ./src/inpage.ts && node ./src/build.js",
+    "test": "jest"
   },
   "author": "",
   "license": "ISC",
@@ -12,9 +13,22 @@
     "ts-loader": "^9.4.0",
     "tsc": "^2.0.4",
     "typescript": "^5.0.4",
-    "webpack": "^5.74.0"
+    "webpack": "^5.74.0",
+    "@types/node": "^20.1.2"
   },
   "devDependencies": {
-    "@types/node": "^20.1.2"
+    "jest": "^26.6.3",
+    "babel-jest": "^26.6.3",
+    "@types/jest": "^26.0.23"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx",
+      "json",
+      "node"
+    ]
   }
 }
