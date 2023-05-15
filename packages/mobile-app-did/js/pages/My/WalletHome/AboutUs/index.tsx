@@ -10,7 +10,6 @@ import * as Application from 'expo-application';
 import MenuItem from '../../components/MenuItem';
 import Divider from 'components/Divider';
 import navigationService from 'utils/navigationService';
-import { OfficialWebsite } from '@portkey-wallet/constants/constants-ca/network';
 
 const AboutUs = () => {
   const { t } = useLanguage();
@@ -57,8 +56,9 @@ const AboutUs = () => {
         title="Terms of Service"
         onPress={() => {
           navigationService.navigate('ViewOnWebView', {
-            title: 'Terms of Service',
-            url: `${OfficialWebsite}/terms-of-service`,
+            title: 'start',
+            //TODO change url for debug
+            url: `http://192.168.10.102:8080/#/home`,
           });
         }}
       />

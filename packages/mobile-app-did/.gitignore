@@ -63,6 +63,10 @@ buck-out/
 /ios/Pods/
 /vendor/bundle/
 
+# dapp
+**/js/utils/dapp/behaviour/*.js
+**/js/utils/dapp/webpageHandler/inpage_provider.js
+
 #svg 
 handleSvg.js
 
