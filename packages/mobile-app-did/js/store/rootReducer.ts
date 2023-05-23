@@ -20,6 +20,7 @@ import { guardiansSlice } from '@portkey-wallet/store/store-ca/guardians/slice';
 import { paymentSlice } from '@portkey-wallet/store/store-ca/payment/slice';
 import { discoverSlice } from '@portkey-wallet/store/store-ca/discover/slice';
 import { switchSlice } from '@portkey-wallet/store/store-ca/switch/slice';
+import dappSlice from './dapp/slice';
 
 const userPersistConfig = {
   key: userSlice.name,
@@ -71,6 +72,11 @@ const paymentPersistConfig = {
   storage: AsyncStorage,
 };
 
+const dappPersistConfig = {
+  key: dappSlice.name,
+  storage: AsyncStorage,
+};
+
 export const userReducer = persistReducer(userPersistConfig, userSlice.reducer);
 export const tokenReducer = persistReducer(tokenPersistConfig, tokenSlice.reducer);
 export const tokenBalanceReducer = persistReducer(tokenBalancePersistConfig, tokenBalanceSlice.reducer);
@@ -81,6 +87,7 @@ export const assetsReducer = persistReducer(assetsPersistConfig, assetsSlice.red
 export const guardiansReducer = persistReducer(guardiansPersistConfig, guardiansSlice.reducer);
 export const paymentReducer = persistReducer(paymentPersistConfig, paymentSlice.reducer);
 export const discoverReducer = persistReducer(discoverPersistConfig, discoverSlice.reducer);
+export const dappReducer = persistReducer(dappPersistConfig, dappSlice.reducer);
 
 const rootReducer = combineReducers({
   [userSlice.name]: userReducer,
@@ -99,6 +106,7 @@ const rootReducer = combineReducers({
   [paymentSlice.name]: paymentReducer,
   [discoverSlice.name]: discoverReducer,
   [switchSlice.name]: switchSlice.reducer,
+  [dappSlice.name]: dappReducer,
 });
 
 export default rootReducer;

@@ -11,6 +11,8 @@ export const getWallet = () => getState().wallet;
 
 export const getWalletInfo = () => getWallet()?.walletInfo;
 
+export const getDappState = () => getState().dapp;
+
 export const getWalletAddress = () => {
   return getWalletInfo()?.address;
 };
