@@ -8,7 +8,7 @@ type VerifierInfo = {
   time: number;
 };
 
-interface SendVerificationConfig extends RequestConfig {
+export interface SendVerificationConfig extends RequestConfig {
   params: {
     type: LoginKeyType;
     guardianIdentifier?: string;
@@ -17,10 +17,10 @@ interface SendVerificationConfig extends RequestConfig {
   };
 }
 
-const IntervalErrorMessage = 'The interval between sending two verification codes is less than 60s';
+export const IntervalErrorMessage = 'The interval between sending two verification codes is less than 60s';
 export class Verification extends StorageBaseLoader {
   private readonly _defaultKeyName = 'portkey_did_wallet';
-  private readonly _expirationTime = 60 * 1000;
+  private readonly _expirationTime = 58 * 1000;
   public verifierMap: {
     [key: string]: VerifierInfo;
   };
@@ -41,16 +41,19 @@ export class Verification extends StorageBaseLoader {
   public async save() {
     this._store.setItem(this._defaultKeyName, JSON.stringify(this.verifierMap));
   }
-  public get(key: string) {
+  public get(key: string): void | VerifierInfo {
     const info = this.verifierMap[key];
     if (!info) return;
     const endTime = info.time + this._expirationTime;
     if (endTime > Date.now()) {
       return info;
     } else {
-      delete this.verifierMap[key];
-      this.save();
+      this.delete(key);
     }
+  }
+  public delete(key: string) {
+    delete this.verifierMap[key];
+    this.save();
   }
   public async set(key: string, value: VerifierInfo) {
     this.verifierMap[key] = value;
@@ -58,7 +61,7 @@ export class Verification extends StorageBaseLoader {
   }
   public async sendVerificationCode(config: SendVerificationConfig) {
     const { guardianIdentifier, verifierId } = config.params;
-    const key = guardianIdentifier || '' + verifierId || '';
+    const key = (guardianIdentifier || '') + (verifierId || '');
     try {
       const req = await request.verify.sendVerificationRequest(config);
       await this.set(key, { ...req, time: Date.now() });
@@ -69,5 +72,12 @@ export class Verification extends StorageBaseLoader {
       if (message === IntervalErrorMessage && item) return item;
       throw error;
     }
+  }
+  public async checkVerificationCode(config: RequestConfig) {
+    const { guardianIdentifier, verifierId } = config.params || {};
+    const key = (guardianIdentifier || '') + (verifierId || '');
+    const req = await request.verify.checkVerificationCode(config);
+    this.delete(key);
+    return req;
   }
 }

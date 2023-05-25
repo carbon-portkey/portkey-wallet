@@ -128,8 +128,6 @@ export default function HomeScreen() {
           title="addManager"
           onPress={async () => {
             if (!chainInfo || !pin || !wallet.caHash) return;
-            // const aa = await getVerifierServers();
-            // console.log(JSON.stringify(aa), '=====aa');
 
             const extraData = await extraDataEncode(getDeviceInfo());
             try {
@@ -201,6 +199,12 @@ export default function HomeScreen() {
             const ipAddress = await Network.getIpAddressAsync();
             const ipAddress2 = await customFetch('https://api.ipify.org/?format=json');
             console.log(ipAddress, ipAddress2, '======ipAddress');
+          }}
+        />
+        <Button
+          title="Discover"
+          onPress={async () => {
+            navigationService.navigate('Discover');
           }}
         />
 

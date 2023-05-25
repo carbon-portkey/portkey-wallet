@@ -27,7 +27,6 @@ import { VerifierImage } from '../VerifierImage';
 import { GuardiansStatus, GuardiansStatusItem } from 'pages/Guardian/types';
 import { useThrottleCallback } from '@portkey-wallet/hooks';
 import { verification } from 'utils/api';
-import { useLanguage } from 'i18n/hooks';
 import { useVerifyToken } from 'hooks/authentication';
 import { PRIVATE_GUARDIAN_ACCOUNT } from '@portkey-wallet/constants/constants-ca/guardian';
 import myEvents from 'utils/deviceEvent';
@@ -59,8 +58,6 @@ function GuardianItemButton({
 }: GuardianAccountItemProps & {
   disabled?: boolean;
 }) {
-  const { t } = useLanguage();
-
   const itemStatus = useMemo(() => guardiansStatus?.[guardianItem.key], [guardianItem.key, guardiansStatus]);
 
   const { status, requestCodeResult } = itemStatus || {};
@@ -88,8 +85,8 @@ function GuardianItemButton({
   const originChainId = useOriginChainId();
 
   const onSendCode = useThrottleCallback(async () => {
-    Loading.show();
     try {
+      Loading.show();
       const req = await verification.sendVerificationCode({
         params: {
           type: LoginType[guardianInfo.guardianItem.guardianType],
@@ -244,20 +241,24 @@ export default function GuardianItem({
   const renderGuardianAccount = useCallback(() => {
     if (!guardianItem.firstName) {
       return (
-        <TextM numberOfLines={1} style={[styles.nameStyle, GStyles.flex1]}>
+        <TextM
+          numberOfLines={[LoginType.Apple, LoginType.Google].includes(guardianItem.guardianType) ? 1 : 2}
+          style={[styles.nameStyle, GStyles.flex1]}>
           {guardianAccount}
         </TextM>
       );
     }
     return (
       <View style={[styles.nameStyle, GStyles.flex1]}>
-        <TextM style={styles.firstNameStyle}>{guardianItem.firstName}</TextM>
+        <TextM style={styles.firstNameStyle} numberOfLines={1}>
+          {guardianItem.firstName}
+        </TextM>
         <TextS style={FontStyles.font3} numberOfLines={1}>
           {guardianAccount}
         </TextS>
       </View>
     );
-  }, [guardianAccount, guardianItem.firstName]);
+  }, [guardianAccount, guardianItem.firstName, guardianItem.guardianType]);
 
   return (
     <View style={[styles.itemRow, isBorderHide && styles.itemWithoutBorder, disabled && styles.disabledStyle]}>

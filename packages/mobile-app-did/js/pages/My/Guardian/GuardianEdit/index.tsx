@@ -242,8 +242,8 @@ const GuardianEdit: React.FC = () => {
           title: t('Confirm'),
           onPress: async () => {
             try {
-              Loading.show();
               if ([LoginType.Email, LoginType.Phone].includes(guardianType)) {
+                Loading.show();
                 const req = await verification.sendVerificationCode({
                   params: {
                     type: LoginType[guardianType],
@@ -485,7 +485,6 @@ const GuardianEdit: React.FC = () => {
             label={t('Guardian email')}
             value={account}
             placeholder={t('Enter email')}
-            maxLength={30}
             onChangeText={onAccountChange}
             errorMessage={guardianTypeError.isError ? guardianTypeError.errorMsg : ''}
             keyboardType="email-address"

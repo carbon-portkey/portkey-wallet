@@ -12,7 +12,6 @@ import { useAppDispatch, useGuardiansInfo, useLoading, useWalletInfo } from 'sto
 import { EmailReg } from '@portkey-wallet/utils/reg';
 import { ISocialLogin, LoginType } from '@portkey-wallet/types/types-ca/wallet';
 import CustomSelect from 'pages/components/CustomSelect';
-import { verifyErrorHandler } from 'utils/tryErrorHandler';
 import useGuardianList from 'hooks/useGuardianList';
 import { setLoginAccountAction } from 'store/reducers/loginCache/actions';
 import { useCurrentWallet, useOriginChainId } from '@portkey-wallet/hooks/hooks-ca/wallet';
@@ -37,6 +36,7 @@ import GuardianAddPopup from './Popup';
 import CustomModal from '../../components/CustomModal';
 import './index.less';
 import { useCommonState } from 'store/Provider/hooks';
+import { MessageType } from 'antd/lib/message';
 
 export default function AddGuardian() {
   const navigate = useNavigate();
@@ -195,6 +195,7 @@ export default function AddGuardian() {
   const handleSocialAuth = useCallback(
     async (v: ISocialLogin) => {
       try {
+        setLoading(true);
         const result = await socialLoginAction(v, currentNetwork);
         const data = result.data;
         if (!data) throw 'auth error';
@@ -223,11 +224,13 @@ export default function AddGuardian() {
         }
         if (result.error) throw result.message ?? result.Error;
       } catch (error) {
+        setLoading(false);
         const msg = handleErrorMessage(error);
         message.error(msg);
       }
+      setLoading(false);
     },
-    [currentNetwork],
+    [currentNetwork, setLoading],
   );
 
   const renderSocialGuardianAccount = useCallback(
@@ -291,6 +294,7 @@ export default function AddGuardian() {
         setLoading(true);
         dispatch(resetUserGuardianStatus());
         await userGuardianList({ caHash: walletInfo.caHash });
+
         const result = await verification.sendVerificationCode({
           params: {
             guardianIdentifier: guardianAccount,
@@ -322,7 +326,7 @@ export default function AddGuardian() {
       } catch (error) {
         setLoading(false);
         console.log('---add-guardian-send-code', error);
-        const _error = verifyErrorHandler(error);
+        const _error = handleErrorMessage(error);
         message.error(_error);
       }
     },
@@ -430,7 +434,7 @@ export default function AddGuardian() {
     navigate('/setting/guardians');
   }, [dispatch, navigate]);
 
-  const handleCheck = useCallback(() => {
+  const handleCheck = useCallback((): void | MessageType => {
     if (guardianType === LoginType.Email) {
       if (!EmailReg.test(emailVal as string)) {
         setEmailErr(EmailError.invalidEmail);
