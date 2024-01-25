@@ -22,11 +22,11 @@ import MyNav from 'pages/My/router';
 import RampNav from 'pages/Ramp';
 import DiscoverNav from 'pages/Discover/index';
 import { isIOS } from '@portkey-wallet/utils/mobile/device';
-import Discover from 'Test/Discover';
 
 import TabsDrawer from 'components/TabsDrawer';
 import ChatNav from 'pages/Chat/routes';
 import ProviderWebPage from 'pages/ProviderWebPage';
+import { ProphetReportPage } from 'pages/Prophet';
 
 const Stack = isIOS ? createNativeStackNavigator() : createStackNavigator();
 export const productionNav = [
@@ -36,6 +36,12 @@ export const productionNav = [
   { name: 'Receive', component: Receive },
   { name: 'NFTDetail', component: NFTDetail },
   { name: 'ProviderWebPage', component: ProviderWebPage },
+  // if you see this in the release version of portkey APP, call 911 or 110 or something else since it is a mistake
+  // DO NOT EVER TRY TO MERGE THOSE CODE TO THE MAIN BRANCH
+  {
+    name: 'Prophet',
+    component: ProphetReportPage,
+  },
 
   ...QrCodeNav,
   ...GuardianNav,

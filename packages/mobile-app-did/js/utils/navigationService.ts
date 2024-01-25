@@ -3,6 +3,7 @@ import { CommonActions, NavigationContainerRef, StackActions } from '@react-navi
 import { RootStackParamList, TabParamList } from 'navigation';
 import merge from 'lodash/merge';
 import { NavigateMultiLevelOptions } from 'types/navigate';
+import { PagePerformanceProphet } from 'pages/Prophet/useProphet';
 
 type MultiLevelParamsIds = string[];
 let TempMultiLevelParams: {
@@ -53,6 +54,7 @@ function getMultiLevelParams() {
 }
 
 function navigate(name: NavigateName, params?: any) {
+  PagePerformanceProphet.reportStartJump(name);
   const multiLevelParams = getMultiLevelParams();
   _navigator?.dispatch(
     CommonActions.navigate({

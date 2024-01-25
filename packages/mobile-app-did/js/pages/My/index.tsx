@@ -50,6 +50,12 @@ export default function MyMenu() {
         icon: 'wallet-security',
       },
       {
+        name: 'Jump to Prophet',
+        label: 'Prophet',
+        icon: 'wallet-security',
+        // if you see this in the release version of portkey APP, call 911 or 110 or something else since it is a mistake
+      },
+      {
         name: 'UserReferral',
         label: 'Referral',
         icon: 'referral',
