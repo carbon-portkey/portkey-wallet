@@ -33,6 +33,7 @@ const DashBoard: React.FC<any> = ({ navigation }) => {
   // nav's to chat tab
   useEffect(() => {
     const listener = myEvents.navToBottomTab.addListener(({ tabName }) => navToChat(tabName));
+    console.log('oracle: ', new Date());
     return () => listener.remove();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
