@@ -1,18 +1,20 @@
 package com.PortkeyApp.compose.qr_code
 
-import androidx.compose.ui.platform.ComposeView
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.AbstractComposeView
 import com.PortkeyApp.compose.general.CustomizedLayoutShadowNode
-import com.facebook.react.uimanager.SimpleViewManager
+import com.PortkeyApp.compose.general.ReactComposeView
+import com.PortkeyApp.compose.general.ReactComposeViewManager
 import com.facebook.react.uimanager.ThemedReactContext
-import com.facebook.react.uimanager.ViewManager
 import com.facebook.react.uimanager.annotations.ReactProp
 
-class QrViewManager : ViewManager<ComposeView,CustomizedLayoutShadowNode>() {
-    private var handler: QrCodeViewHandler? = null
-    private var initContent: String = ""
-    private var initSize: Int = 16
+class QrViewManager : ReactComposeViewManager<ReactComposeView>("ComposeQrCodeView") {
+    private var initContent: String by mutableStateOf("")
+    private var initSize: Int by mutableIntStateOf(16)
 
-    override fun getName(): String = "ComposeQrCodeView"
     override fun getShadowNodeClass(): Class<out CustomizedLayoutShadowNode> {
         return CustomizedLayoutShadowNode::class.java
     }
@@ -21,26 +23,20 @@ class QrViewManager : ViewManager<ComposeView,CustomizedLayoutShadowNode>() {
         return CustomizedLayoutShadowNode()
     }
 
-    override fun createViewInstance(context: ThemedReactContext): ComposeView {
-        val (handler, view) = renderQrCodeView(context, initContent, initSize)
-        this.handler = handler
-        return view
+    override fun renderView(context: ThemedReactContext): ReactComposeView {
+        return renderQrCodeView(context, initContent, initSize)
     }
 
-    override fun updateExtraData(p0: ComposeView, p1: Any?) {
-
-    }
+    override fun updateExtraData(p0: ReactComposeView, p1: Any?) {}
 
     @ReactProp(name = "content")
-    fun setContent(view: ComposeView, content: String) {
+    fun setContent(view: AbstractComposeView, content: String) {
         initContent = content
-        handler?.updateUrl(content)
     }
 
     @ReactProp(name = "size", defaultInt = 16)
-    fun setSize(view: ComposeView, size: Int) {
+    fun setSize(view: AbstractComposeView, size: Int) {
         initSize = size
-        handler?.updateSize(size)
     }
 
 }

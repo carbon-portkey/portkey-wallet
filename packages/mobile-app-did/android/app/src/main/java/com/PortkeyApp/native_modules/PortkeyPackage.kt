@@ -1,6 +1,7 @@
 package com.PortkeyApp.native_modules
 
 import com.PortkeyApp.compose.qr_code.QrViewManager
+import com.PortkeyApp.native_modules.lifecycle.AppLifeCycleModule
 import com.facebook.react.ReactPackage
 import com.facebook.react.bridge.NativeModule
 import com.facebook.react.bridge.ReactApplicationContext

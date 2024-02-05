@@ -23,6 +23,7 @@ import fonts from 'assets/theme/fonts';
 import { DefaultChainId } from '@portkey-wallet/constants/constants-ca/network';
 
 export default function Receive() {
+  console.log('Receive rendered ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++');
   const { t } = useLanguage();
   const { currentNetwork } = useWallet();
   const defaultToken = useDefaultToken();

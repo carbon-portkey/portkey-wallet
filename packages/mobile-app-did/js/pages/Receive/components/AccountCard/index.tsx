@@ -9,6 +9,7 @@ import { useCurrentNetworkInfo } from '@portkey-wallet/hooks/hooks-ca/network';
 import { shrinkSendQrData, QRCodeDataObjType } from '@portkey-wallet/utils/qrCode';
 import CommonQRCodeStyled from 'components/CommonQRCodeStyled';
 import { ComposeQrCodeView } from 'utils/nativeModules';
+import { useComposableForceUpdate, useComposableLifetime } from 'utils/nativeModules/composable/hooks';
 
 const cardWidth = ScreenWidth * 0.63;
 
@@ -45,6 +46,9 @@ export default function AccountCard({
 }
 
 const QRCodeComponent = (qrData: string, size = pTd(236)) => {
+  const { pageIdentifier } = useComposableLifetime('QR_CODE');
+  const { fakeState } = useComposableForceUpdate();
+  console.log('render called');
   const qrCodeComponentStyle: ViewStyle = useMemo(() => {
     return {
       height: size,
@@ -59,7 +63,7 @@ const QRCodeComponent = (qrData: string, size = pTd(236)) => {
     <CommonQRCodeStyled qrData={qrData} width={size} />
   ) : (
     <View style={qrCodeComponentStyle}>
-      <ComposeQrCodeView content={qrData} size={size} />
+      <ComposeQrCodeView content={qrData} size={size} pageIdentifier={pageIdentifier} fakeState={fakeState} />
     </View>
   );
 };
