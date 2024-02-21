@@ -36,6 +36,7 @@ import { resetSecurity } from '@portkey-wallet/store/store-ca/security/actions';
 import signalrFCM from '@portkey-wallet/socket/socket-fcm';
 import { deleteFCMToken } from 'utils/FCM';
 import { resetBadge } from 'utils/notifee';
+import { useLatestRef } from '@portkey-wallet/hooks';
 
 export default function useLogOut() {
   const dispatch = useAppDispatch();
@@ -101,19 +102,19 @@ export function useCheckManager() {
 }
 
 export function useCheckManagerOnLogout() {
-  const getCurrentCAViewContract = useGetCurrentCAViewContract();
   const checkManager = useCheckManager();
   const { caHash, address } = useCurrentWalletInfo();
   const originChainId = useOriginChainId();
+  const latestOriginChainId = useLatestRef(originChainId);
   const logout = useLogOut();
   return useLockCallback(async () => {
     if (!caHash) return;
     try {
-      const isManager = await checkManager({ caHash, address, chainId: originChainId });
+      const isManager = await checkManager({ caHash, address, chainId: latestOriginChainId.current });
       const walletInfo = getWalletInfo();
       if (!isManager && walletInfo?.address === address && isCurrentCaHash(caHash)) logout();
     } catch (error) {
       console.log(error, '======error-useCheckManagerOnLogout');
     }
-  }, [address, caHash, getCurrentCAViewContract, logout, originChainId]);
+  }, [address, caHash, checkManager, latestOriginChainId, logout]);
 }
