@@ -1,14 +1,14 @@
 import { useCurrentNetwork } from '@portkey-wallet/hooks/network';
 import { ScreenWidth } from '@rneui/base';
 import { defaultColors } from 'assets/theme';
-import { TextM } from 'components/CommonText';
-import React from 'react';
-import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
+import React, { useMemo } from 'react';
+import { Platform, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import { pTd } from 'utils/unit';
 import { TokenItemShowType } from '@portkey-wallet/types/types-ca/token';
 import { useCurrentNetworkInfo } from '@portkey-wallet/hooks/hooks-ca/network';
 import { shrinkSendQrData, QRCodeDataObjType } from '@portkey-wallet/utils/qrCode';
 import CommonQRCodeStyled from 'components/CommonQRCodeStyled';
+import { ComposeQrCodeView } from 'utils/nativeModules';
 
 const cardWidth = ScreenWidth * 0.63;
 
@@ -41,12 +41,28 @@ export default function AccountCard({
     },
   };
 
-  return (
-    <View style={[styles.container, style]}>
-      <CommonQRCodeStyled qrData={JSON.stringify(shrinkSendQrData(info))} width={pTd(236)} />
+  return <View style={[styles.container, style]}>{QRCodeComponent(JSON.stringify(shrinkSendQrData(info)))}</View>;
+}
+
+const QRCodeComponent = (qrData: string, size = pTd(236)) => {
+  const qrCodeComponentStyle: ViewStyle = useMemo(() => {
+    return {
+      height: size,
+      width: size,
+      display: 'flex',
+      flexDirection: 'column',
+      alignContent: 'center',
+      justifyContent: 'center',
+    };
+  }, [size]);
+  return Platform.OS === 'ios' ? (
+    <CommonQRCodeStyled qrData={qrData} width={size} />
+  ) : (
+    <View style={qrCodeComponentStyle}>
+      <ComposeQrCodeView content={qrData} size={size} />
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {

@@ -1,4 +1,4 @@
-import { NativeModules } from 'react-native';
+import { NativeModules, requireNativeComponent } from 'react-native';
 
 export interface PortkeyAppNativeModules {
   AppLifeCycleModule: AppLifeCycleModule;
@@ -14,3 +14,11 @@ export interface AppLifeCycleModule {
 const PortkeyAppNativeModules = NativeModules as PortkeyAppNativeModules;
 
 export const AppLifeCycleModule = PortkeyAppNativeModules.AppLifeCycleModule;
+
+// used to improve performance
+export const ComposeQrCodeView = requireNativeComponent<ComposeQrCodeViewProps>('ComposeQrCodeView');
+
+export interface ComposeQrCodeViewProps {
+  content: string;
+  size: number;
+}
