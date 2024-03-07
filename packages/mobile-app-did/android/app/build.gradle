@@ -5,15 +5,13 @@ apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'com.google.firebase.firebase-perf'
 
 
-
-
 // react-native-config support; with https://github.com/luggit/react-native-config
 apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
 
 
 // icon
 project.ext.vectoricons = [
-    iconFontNames: [ 'MaterialIcons.ttf', 'EvilIcons.ttf' ] // Name of the font files you want to copy
+        iconFontNames: ['MaterialIcons.ttf', 'EvilIcons.ttf'] // Name of the font files you want to copy
 ]
 apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
 
@@ -96,8 +94,8 @@ import com.android.build.OutputFile
  */
 
 project.ext.react = [
-    entryFile: "index.js",
-    enableHermes: true   // clean and rebuild if changing
+        entryFile   : "index.js",
+        enableHermes: true   // clean and rebuild if changing
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
@@ -154,11 +152,22 @@ def reactNativeArchitectures() {
 /*
  * get release time
  */
+
 def releaseTime() {
-    return new Date().format("MMddhhmm",TimeZone.getDefault())
+    return new Date().format("MMddhhmm", TimeZone.getDefault())
 }
 
 android {
+    packagingOptions {
+        resources {
+            excludes += "META-INF/"
+            excludes += "okhttp3/"
+            excludes += "kotlin/"
+            excludes += "org/"
+            excludes += ".properties"
+            excludes += ".bin"
+        }
+    }
     ndkVersion rootProject.ext.ndkVersion
 
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -176,13 +185,13 @@ android {
             externalNativeBuild {
                 ndkBuild {
                     arguments "APP_PLATFORM=android-21",
-                        "APP_STL=c++_shared",
-                        "NDK_TOOLCHAIN_VERSION=clang",
-                        "GENERATED_SRC_DIR=$buildDir/generated/source",
-                        "PROJECT_BUILD_DIR=$buildDir",
-                        "REACT_ANDROID_DIR=$rootDir/../node_modules/react-native/ReactAndroid",
-                        "REACT_ANDROID_BUILD_DIR=$rootDir/../node_modules/react-native/ReactAndroid/build",
-                        "NODE_MODULES_DIR=$rootDir/../node_modules"
+                            "APP_STL=c++_shared",
+                            "NDK_TOOLCHAIN_VERSION=clang",
+                            "GENERATED_SRC_DIR=$buildDir/generated/source",
+                            "PROJECT_BUILD_DIR=$buildDir",
+                            "REACT_ANDROID_DIR=$rootDir/../node_modules/react-native/ReactAndroid",
+                            "REACT_ANDROID_BUILD_DIR=$rootDir/../node_modules/react-native/ReactAndroid/build",
+                            "NODE_MODULES_DIR=$rootDir/../node_modules"
                     cFlags "-Wall", "-Werror", "-fexceptions", "-frtti", "-DWITH_INSPECTOR=1"
                     cppFlags "-std=c++17"
                     // Make sure this target name is the same you specify inside the
@@ -197,7 +206,7 @@ android {
             }
             if (!enableSeparateBuildPerCPUArchitecture) {
                 ndk {
-                    abiFilters (*reactNativeArchitectures())
+                    abiFilters(*reactNativeArchitectures())
                 }
             }
         }
@@ -249,7 +258,7 @@ android {
             reset()
             enable enableSeparateBuildPerCPUArchitecture
             universalApk false  // If true, also generate a universal APK
-            include (*reactNativeArchitectures())
+            include(*reactNativeArchitectures())
         }
     }
     signingConfigs {
@@ -259,7 +268,7 @@ android {
             keyAlias project.env.get("RELEASE_KEY_ALIAS")
             keyPassword project.env.get("RELEASE_KEY_PASSWORD")
         }
-        release{
+        release {
             storeFile file(project.env.get("RELEASE_STORE_FILE"))
             storePassword project.env.get("RELEASE_STORE_PASSWORD")
             keyAlias project.env.get("RELEASE_KEY_ALIAS")
@@ -281,7 +290,7 @@ android {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
 
-            if(project.env.get("RELEASE_STORE_FILE") !=  "appcenter"){
+            if (project.env.get("RELEASE_STORE_FILE") != "appcenter") {
                 signingConfig signingConfigs.release
             }
             minifyEnabled enableProguardInReleaseBuilds
@@ -318,6 +327,7 @@ android {
     }
 }
 
+
 dependencies {
     implementation platform('com.google.firebase:firebase-bom:30.3.1')
     implementation 'com.google.firebase:firebase-perf'
@@ -330,34 +340,35 @@ dependencies {
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+    implementation 'androidx.core:core-ktx:+'
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
-        exclude group:'com.facebook.fbjni'
+        exclude group: 'com.facebook.fbjni'
     }
 
     implementation("io.github.alexzhirkevich:qrose:1.0.0-beta3")
 
-    implementation 'androidx.compose.ui:ui-android:1.6.0'
-    implementation 'androidx.compose.material:material:1.6.0'
-    implementation 'androidx.compose.ui:ui-tooling:1.6.0'
-    implementation 'androidx.compose.runtime:runtime-livedata:1.6.0'
+    implementation 'androidx.compose.ui:ui-android:1.6.3'
+    implementation 'androidx.compose.material:material:1.6.3'
+    implementation 'androidx.compose.ui:ui-tooling:1.6.3'
+    implementation 'androidx.compose.runtime:runtime-livedata:1.6.3'
 
     implementation 'androidx.core:core-ktx:+'
 
 
     debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
-        exclude group:'com.facebook.flipper'
-        exclude group:'com.squareup.okhttp3', module:'okhttp'
+        exclude group: 'com.facebook.flipper'
+        exclude group: 'com.squareup.okhttp3', module: 'okhttp'
     }
 
     debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}") {
-        exclude group:'com.facebook.flipper'
+        exclude group: 'com.facebook.flipper'
     }
 
     if (enableHermes) {
         //noinspection GradleDynamicVersion
         implementation("com.facebook.react:hermes-engine:+") { // From node_modules
-            exclude group:'com.facebook.fbjni'
+            exclude group: 'com.facebook.fbjni'
         }
     } else {
         implementation jscFlavor
@@ -387,7 +398,8 @@ task copyDownloadableDepsToLibs(type: Copy) {
     into 'libs'
 }
 
-apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle")
+apply plugin: 'org.jetbrains.kotlin.android'; applyNativeModulesAppBuildGradle(project)
 
 def isNewArchitectureEnabled() {
     // To opt-in for the New Architecture, you can either:
