@@ -281,11 +281,19 @@ android {
             keyPassword System.getProperty("APPCENTER_KEY_PASSWORD")
         }
     }
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion rootProject.ext.compose_version
+        kotlinCompilerVersion rootProject.ext.kotlin_version
+    }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
             resValue "string", "CodePushDeploymentKey", '""'
         }
+
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.
@@ -348,10 +356,10 @@ dependencies {
 
     implementation("io.github.alexzhirkevich:qrose:1.0.0-beta3")
 
-    implementation 'androidx.compose.ui:ui-android:1.6.3'
-    implementation 'androidx.compose.material:material:1.6.3'
-    implementation 'androidx.compose.ui:ui-tooling:1.6.3'
-    implementation 'androidx.compose.runtime:runtime-livedata:1.6.3'
+    implementation "androidx.compose.ui:ui-android:${rootProject.ext.compose_version}"
+    implementation "androidx.compose.material:material:${rootProject.ext.compose_version}"
+    implementation "androidx.compose.ui:ui-tooling:${rootProject.ext.compose_version}"
+    implementation "androidx.compose.runtime:runtime-livedata:${rootProject.ext.compose_version}"
 
     implementation 'androidx.core:core-ktx:+'
 
