@@ -4,6 +4,7 @@ import accountSettingsNav from './AccountSettings/router';
 import ContactsNav from './Contacts/index';
 import GuardianNav from './Guardian/index';
 import UserReferral from './UserReferral/index';
+import { ComposePage } from './ComposeMe';
 
 const stackNav = [
   ...WalletSecurityNav,
@@ -12,6 +13,7 @@ const stackNav = [
   ...ContactsNav,
   ...GuardianNav,
   { name: 'UserReferral', component: UserReferral },
+  { name: 'ComposeMe', component: ComposePage },
 ] as const;
 
 export default stackNav;

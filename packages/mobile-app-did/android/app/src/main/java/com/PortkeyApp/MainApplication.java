@@ -6,7 +6,7 @@ import expo.modules.ReactNativeHostWrapper;
 import android.app.Application;
 import android.content.Context;
 
-import com.PortkeyApp.native_modules.PortkeyPackage;
+import com.PortkeyApp.PortkeyPackage;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactInstanceManager;

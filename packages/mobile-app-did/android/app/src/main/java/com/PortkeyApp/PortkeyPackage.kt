@@ -1,6 +1,7 @@
-package com.PortkeyApp.native_modules
+package com.PortkeyApp
 
 import com.PortkeyApp.compose.qr_code.QrViewManager
+import com.PortkeyApp.compose.test.WrapperViewManager
 import com.PortkeyApp.native_modules.lifecycle.AppLifeCycleModule
 import com.facebook.react.ReactPackage
 import com.facebook.react.bridge.NativeModule
@@ -13,6 +14,6 @@ class PortkeyPackage : ReactPackage {
     }
 
     override fun createViewManagers(reactApplicationContext: ReactApplicationContext): List<ViewManager<*, *>> {
-        return mutableListOf(QrViewManager())
+        return mutableListOf(QrViewManager(), WrapperViewManager())
     }
 }

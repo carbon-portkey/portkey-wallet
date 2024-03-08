@@ -17,8 +17,12 @@ export const AppLifeCycleModule = PortkeyAppNativeModules.AppLifeCycleModule;
 
 // used to improve performance
 export const ComposeQrCodeView = requireNativeComponent<ComposeQrCodeViewProps>('ComposeQrCodeView');
+export const ComposeWrapperView = requireNativeComponent<VoidProps>('ColorfulWrapper');
 
 export interface ComposeQrCodeViewProps {
   content: string;
   size: number;
 }
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface VoidProps {}

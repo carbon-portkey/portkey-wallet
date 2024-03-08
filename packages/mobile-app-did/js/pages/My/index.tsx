@@ -54,6 +54,14 @@ export default function MyMenu() {
         icon: 'wallet-security',
       },
       {
+        name: 'Compose Me',
+        label: 'Compose Me',
+        icon: 'wallet-security',
+        onPress: () => {
+          navigationService.navigate('ComposeMe');
+        },
+      } as any,
+      {
         name: 'UserReferral',
         label: 'Referral',
         icon: 'referral',

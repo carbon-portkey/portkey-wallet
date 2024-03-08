@@ -29,7 +29,7 @@ fun renderQrCodeView(
 ): ReactComposeView {
     return ReactComposeView(context = cxt, identifier = initPageIdentifier) {
         val logoPainter: Painter =
-            painterResource(R.drawable.js_assets_image_pngs_portkeyblackborderradius)
+            painterResource(R.drawable.portkey_black_border_radius)
         val painter =
             rememberQrCodePainter(
                 data = initContent,
