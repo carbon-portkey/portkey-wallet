@@ -66,6 +66,11 @@ interface TransformViewState {
   scale: AnimatedValue;
 }
 
+// this value controls the frequency of the touch callback
+// react-native will trigger the touch callback near 88 times in 1 second(16ms/once), which is too frequent and may cause performance problems
+// the TOUCH_CALLBACK_CONTROL_RATE constant is used to control the frequency of the touch callback, the default value is 6, which means that the touch callback will be jumped over every 6 times
+const TOUCH_CALLBACK_CONTROL_RATE = 6;
+
 export default class TransformView extends Component<TransformViewProps, TransformViewState> {
   static defaultProps = {
     inertial: true,
@@ -89,6 +94,7 @@ export default class TransformView extends Component<TransformViewProps, Transfo
   panResponderStatus: boolean | undefined;
   nestScrollViewLayout: any;
   listenerList: EmitterSubscription[] = [];
+  hex = 0;
   constructor(props: TransformViewProps) {
     super(props);
     this.createPanResponder();
@@ -264,10 +270,12 @@ export default class TransformView extends Component<TransformViewProps, Transfo
   };
 
   onPanResponderMove: PanResponderCallback = e => {
+    if (this.hex++ % TOUCH_CALLBACK_CONTROL_RATE === 0) {
+      return;
+    }
     this.handleTouches(e.nativeEvent.touches, (dx, dy, speedX, speedY, scaleRate) => {
       const { tension, onTransforming, tensionFactor = 3 } = this.props;
       const { translateX, translateY, scale } = this.state;
-
       const { x, y, width, height } = this.contentLayout;
       if (tension) {
         if (x > this.initContentLayout.x) dx /= tensionFactor;
@@ -307,8 +315,8 @@ export default class TransformView extends Component<TransformViewProps, Transfo
           newY = translateY._value + dy;
           this.setScale(scale._value * scaleRate);
       }
-      this.setTranslateX(newX);
-      this.setTranslateY(newY);
+      newX && this.setTranslateX(newX);
+      newY && this.setTranslateY(newY);
 
       this.removeLongPressTimer();
       this.touchMoved = true;
@@ -344,23 +352,30 @@ export default class TransformView extends Component<TransformViewProps, Transfo
         return;
       }
     }
-
     //translate
     let t0, t1;
+    const [
+      { pageX: prevTouchesX1 = 0, pageY: prevTouchesY1 = 0, timestamp: prevTimestamp = 0 } = {},
+      { pageX: prevTouchesX2 = 0, pageY: prevTouchesY2 = 0 } = {},
+    ] = prevTouches;
+    const [
+      { pageX: touchesX1 = 0, pageY: touchesY1 = 0, timestamp = 0 } = {},
+      { pageX: touchesX2 = 0, pageY: touchesY2 = 0 } = {},
+    ] = touches;
     if (touches.length === 1) {
-      t0 = { x: prevTouches[0].pageX, y: prevTouches[0].pageY };
-      t1 = { x: touches[0].pageX, y: touches[0].pageY };
+      t0 = { x: prevTouchesX1, y: prevTouchesY1 };
+      t1 = { x: touchesX1, y: touchesY1 };
     } else {
       t0 = {
-        x: (prevTouches[0].pageX + prevTouches[1].pageX) / 2,
-        y: (prevTouches[0].pageY + prevTouches[1].pageY) / 2,
+        x: (prevTouchesX1 + prevTouchesX2) / 2,
+        y: (prevTouchesY1 + prevTouchesY2) / 2,
       };
-      t1 = { x: (touches[0].pageX + touches[1].pageX) / 2, y: (touches[0].pageY + touches[1].pageY) / 2 };
+      t1 = { x: (touchesX1 + touchesX2) / 2, y: (touchesY1 + touchesY2) / 2 };
     }
     const dx = t1.x - t0.x;
     const dy = t1.y - t0.y;
 
-    const t = touches[0].timestamp - prevTouches[0].timestamp;
+    const t = timestamp - prevTimestamp;
     const speedX = t ? dx / t : 0;
     const speedY = t ? dy / t : 0;
 
@@ -368,17 +383,16 @@ export default class TransformView extends Component<TransformViewProps, Transfo
     let distance0 = 0,
       distance1 = 0;
     if (touches.length >= 2) {
-      const dx0 = prevTouches[1].pageX - prevTouches[0].pageX;
-      const dy0 = prevTouches[1].pageY - prevTouches[0].pageY;
-      const dx1 = touches[1].pageX - touches[0].pageX;
-      const dy1 = touches[1].pageY - touches[0].pageY;
+      const dx0 = prevTouchesX2 - prevTouchesX1;
+      const dy0 = prevTouchesY2 - prevTouchesY1;
+      const dx1 = touchesX2 - touchesX1;
+      const dy1 = touchesY2 - touchesY1;
       distance0 = Math.sqrt(dx0 * dx0 + dy0 * dy0);
       distance1 = Math.sqrt(dx1 * dx1 + dy1 * dy1);
     }
 
     if (distance0 && distance1) {
       let scaleRate = distance1 / distance0;
-
       const { maxScale } = this.props;
       const { scale } = this.state;
       if (scale._value * scaleRate > maxScale) {

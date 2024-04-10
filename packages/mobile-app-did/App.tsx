@@ -33,7 +33,8 @@ import { initNotifications } from 'utils/notifee';
 import { logBoxTextColorSaver } from 'utils/textColor';
 import { CODE_PUSH_OPTIONS } from 'constants/codePush';
 
-if (__DEV__) {
+// This may cause some textColor issues on Android, don't worry since it will be disabled on production environment.
+if (__DEV__ && Config.ENABLE_LOGBOX_SAVER) {
   logBoxTextColorSaver();
 }
 

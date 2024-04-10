@@ -8,7 +8,7 @@ export const logBoxTextColorSaver = () => {
       const oldProps = origin.props;
       const newProps = {
         ...oldProps,
-        style: [oldProps.style, Platform.OS === 'ios' ? {} : { color: '#fff' }],
+        style: [oldProps.style, Platform.OS === 'ios' ? {} : { color: 'gray' }],
       };
       const newElement = React.cloneElement(origin, newProps, origin.props.children);
       return newElement;
