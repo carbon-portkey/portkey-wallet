@@ -193,6 +193,7 @@ export const SelectNetworkModal = (
               myEvents.nestScrollViewScrolledTop.emit();
             }
           }}
+          ListEmptyComponent={noData}
           keyExtractor={(item, index) => `${item.network.network}-${index}`}
           renderItem={({ item }) => (
             <TokenListItem

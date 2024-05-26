@@ -133,7 +133,6 @@ export default class TransformView extends Component<TransformViewProps, Transfo
       this.panResponderStatus = true;
     });
     const listener2 = myEvents.nestScrollViewLayout.addListener(layout => {
-      console.log('layout', layout);
       this.nestScrollViewLayout = layout;
     });
     this.listenerList = [listener1, listener2];
